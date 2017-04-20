@@ -8,15 +8,11 @@ import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 
 void main(List<String> args) {
+
+  var port = int.parse(Platform.environment['PORT']);
+
   var parser = new ArgParser()
-    ..addOption('port', abbr: 'p', defaultsTo: '9999');
-
-  var result = parser.parse(args);
-
-  var port = int.parse(result['port'], onError: (val) {
-    stdout.writeln('Could not parse port value "$val" into a number.');
-    exit(1);
-  });
+    ..addOption('port', abbr: 'p', defaultsTo: '${port}');
 
   var handler = const shelf.Pipeline()
       .addMiddleware(shelf.logRequests())
