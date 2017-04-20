@@ -2,17 +2,12 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
-
-import 'package:args/args.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 
 void main(List<String> args) {
 
-  var port = int.parse(Platform.environment['PORT']);
-
-  var parser = new ArgParser()
-    ..addOption('port', abbr: 'p', defaultsTo: '${port}');
+  var port = _getConfig("PORT", 8080);
 
   var handler = const shelf.Pipeline()
       .addMiddleware(shelf.logRequests())
@@ -21,6 +16,14 @@ void main(List<String> args) {
   io.serve(handler, '0.0.0.0', port).then((server) {
     print('Serving at http://${server.address.host}:${server.port}');
   });
+}
+
+int _getConfig(String name, [defaultValue]) {
+  var value = Platform.environment[name];
+  if (value == null) {
+    return defaultValue;
+  }
+  return int.parse(value);
 }
 
 shelf.Response _echoRequest(shelf.Request request) {
